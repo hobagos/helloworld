@@ -3,7 +3,6 @@
 from gi.repository import Gtk, Gdk, Gio, Granite, Notify, GObject
 
 import Settings
-import Dribbble
 import Thread
 
 
@@ -64,11 +63,8 @@ class MyWindow(Gtk.Window):
         self.add(vbox)
 
     def load_content(self):
-        dribbble = Dribbble.Dribbble()
-        dribbble_shots = dribbble.get_popular()
-        for shot in dribbble_shots[:1]:
-            loader = Thread.ImageLoader(self.image, shot['image_teaser_url'])
-            loader.start()
+        loader = Thread.ImageLoader(self.image)
+        loader.start()
 
     def load_state(self):
         self.set_default_size(
