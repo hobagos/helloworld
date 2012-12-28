@@ -3,15 +3,23 @@ import os
 import glib
 import json
 
+DEBUG = True
 NAME = "helloworld"
 
 
 class Settings(UserDict):
-    FILENAME = os.path.join(
-        glib.get_user_config_dir(),
-        NAME,
-        'settings.json'
-        )
+
+    if DEBUG:
+        FILENAME = os.path.join(
+            os.path.dirname(__file__),
+            "settings.json"
+            )
+    else:
+        FILENAME = os.path.join(
+            glib.get_user_config_dir(),
+            NAME,
+            'settings.json'
+            )
 
     DEFAULT_PREFERENCES = {
         'width': 500,
