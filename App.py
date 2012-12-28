@@ -57,13 +57,18 @@ class MyWindow(Gtk.Window):
         # welcome.append ("", "Show popular", "");
         # vbox.pack_start(welcome, True, True, 0)
 
-        self.image = Gtk.Image()
-        vbox.pack_start(self.image, True, True, 0)
+        grid = Gtk.Table(3, 3, True)
+        self.images = []
+        for i in xrange(9):
+            image = Gtk.Image()
+            self.images.append(image)
+            grid.attach(image, i%3, i%3+1, i/3, i/3+1)
+        vbox.pack_start(grid, True, True, 0)
 
         self.add(vbox)
 
     def load_content(self):
-        loader = Thread.ImageLoader(self.image)
+        loader = Thread.ImageLoader(self.images)
         loader.start()
 
     def load_state(self):
