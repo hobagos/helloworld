@@ -1,8 +1,10 @@
 #!/usr/bin/python
 
-from gi.repository import Gtk, Gdk, Gio, Granite, Notify
+from gi.repository import Gtk, Gdk, Gio, Granite, Notify, GObject
 
 import Settings
+import Dribbble
+import Thread
 
 
 class MyWindow(Gtk.Window):
@@ -25,6 +27,7 @@ class MyWindow(Gtk.Window):
 
         self.load_state()
         self.load_ui()
+        self.load_content()
 
     def load_ui(self):
         vbox = Gtk.VBox()
@@ -49,24 +52,23 @@ class MyWindow(Gtk.Window):
         appmenu = Granite.WidgetsAppMenu.new(menu)
         toolbar.insert(appmenu, -1)
 
-        welcome = Granite.WidgetsWelcome.new(
-            "Hello World",
-            "Sample program")
-        welcome.drag_dest_set(
-            Gtk.DestDefaults.ALL,
-            [], Gdk.DragAction.COPY)
-        welcome.connect(
-            "drag-data-received",
-            self.on_drag_data_received)
-        welcome.drag_dest_add_uri_targets()
-        vbox.pack_start(welcome, True, True, 0)
+        # welcome = Granite.WidgetsWelcome.new(
+        #     "Dribbble",
+        #     "Inspire yourself")
+        # welcome.append ("", "Show popular", "");
+        # vbox.pack_start(welcome, True, True, 0)
+
+        self.image = Gtk.Image()
+        vbox.pack_start(self.image, True, True, 0)
 
         self.add(vbox)
 
-    def on_drag_data_received(self,
-            widget, context, x, y,
-            data, info, time):
-        print data.get_data()
+    def load_content(self):
+        dribbble = Dribbble.Dribbble()
+        dribbble_shots = dribbble.get_popular()
+        for shot in dribbble_shots[:1]:
+            loader = Thread.ImageLoader(self.image, shot['image_teaser_url'])
+            loader.start()
 
     def load_state(self):
         self.set_default_size(
@@ -120,6 +122,7 @@ class App(Gtk.Application):
 
 
 if __name__ == "__main__":
+    GObject.threads_init()
     app = App()
     argv = "test.py"
     app.run(None)
