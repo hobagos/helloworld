@@ -24,6 +24,8 @@ class MyWindow(Gtk.Window):
         self.connect("window-state-event", self.state_handler)
         self.connect("delete-event", self.destroy_handler)
 
+        self.loader = None
+
         self.load_state()
         self.load_ui()
         self.load_content()
@@ -73,6 +75,8 @@ class MyWindow(Gtk.Window):
         self.add(vbox)
 
     def load_content(self, *args):
+        if self.loader:
+            self.loader.abort()
         self.loader = Thread.ImageLoader(self.images)
         self.loader.start()
 
