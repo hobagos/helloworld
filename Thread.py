@@ -12,6 +12,7 @@ class ImageLoader(threading.Thread):
         threading.Thread.__init__(self)
 
         self.image_widgets = image_widgets
+        self._abort = False
 
     def run(self):
         try:
@@ -23,7 +24,11 @@ class ImageLoader(threading.Thread):
             return
 
         for i, shot in enumerate(dribbble_shots):
+            if self._abort: break
             ImageFromURL(self.image_widgets[i], shot['image_teaser_url'])
+
+    def abort(self):
+        self._abort = True
 
 class ImageFromURL(threading.Thread):
     def __init__(self, image_widget, url):

@@ -34,6 +34,15 @@ class MyWindow(Gtk.Window):
         toolbar = Gtk.Toolbar.new()
         vbox.pack_start(toolbar, False, True, 0)
 
+        refresh = Gtk.ToolButton(Gtk.STOCK_REFRESH)
+        refresh.connect("clicked", self.load_content)
+        toolbar.insert(refresh, -1)
+
+        separator = Gtk.SeparatorToolItem.new()
+        separator.set_expand(True)
+        separator.set_draw(False)
+        toolbar.insert(separator, -1)
+
         menu = Gtk.Menu.new()
         notify_item = Gtk.MenuItem.new_with_label("Notify")
         notify_item.connect("activate", self.menu_notify)
@@ -44,10 +53,6 @@ class MyWindow(Gtk.Window):
         menu_item.connect('activate', self.destroy_handler)
         menu.append(menu_item)
 
-        separator = Gtk.SeparatorToolItem.new()
-        separator.set_expand(True)
-        separator.set_draw(False)
-        toolbar.insert(separator, -1)
         appmenu = Granite.WidgetsAppMenu.new(menu)
         toolbar.insert(appmenu, -1)
 
@@ -67,9 +72,9 @@ class MyWindow(Gtk.Window):
 
         self.add(vbox)
 
-    def load_content(self):
-        loader = Thread.ImageLoader(self.images)
-        loader.start()
+    def load_content(self, *args):
+        self.loader = Thread.ImageLoader(self.images)
+        self.loader.start()
 
     def load_state(self):
         self.set_default_size(
@@ -94,6 +99,8 @@ class MyWindow(Gtk.Window):
             self.settings["maximized"] = False
 
     def destroy_handler(self, *args):
+        self.hide()
+        self.loader.abort()
         self.save_state()
         self.get_application().quit()
 
